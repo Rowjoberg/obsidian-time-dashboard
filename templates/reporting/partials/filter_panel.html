@@ -1,0 +1,52 @@
+<section class="panel filter-panel">
+    <form method="get" class="filter-grid">
+        <div>
+            <label for="id_period">Period</label>
+            {{ filter_form.period }}
+        </div>
+        <div>
+            <label for="id_focus_date">Focus Date</label>
+            {{ filter_form.focus_date }}
+        </div>
+        <div>
+            <label for="id_start_date">Start Date</label>
+            {{ filter_form.start_date }}
+        </div>
+        <div>
+            <label for="id_end_date">End Date</label>
+            {{ filter_form.end_date }}
+        </div>
+        <div>
+            <label for="id_group_by">Group By</label>
+            {{ filter_form.group_by }}
+        </div>
+        <div>
+            <label for="id_dynamic_filter_field">Add Frontmatter Filter</label>
+            {{ filter_form.dynamic_filter_field }}
+        </div>
+        {% for field in filter_form.base_filter_fields %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="filter-section-title">Available frontmatter filters</div>
+        {% for field in filter_form.dynamic_filter_fields %}
+            <div class="dynamic-filter {% if not field.value %}is-collapsed{% endif %}" data-dynamic-filter-container data-field-name="{{ field.field.widget.attrs.data_field_name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="filter-actions">
+            <button type="submit">Apply Filters</button>
+            <a class="secondary-link" href="{{ request.path }}">Reset</a>
+        </div>
+    </form>
+    {% if active_filter_chips %}
+        <div class="active-filter-chips">
+            {% for chip in active_filter_chips %}
+                <a href="{{ chip.clear_url }}" class="filter-chip">{{ chip.label }} <span aria-hidden="true">x</span></a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>

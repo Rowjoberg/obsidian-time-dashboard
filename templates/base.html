@@ -1,0 +1,72 @@
+{% load static_assets %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Dashboard</title>
+    <script>
+    (() => {
+        const savedTheme = localStorage.getItem('task-dashboard-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+    })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/static/reporting/favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+    {% versioned_static 'reporting/app.css' as app_css %}
+    <link rel="stylesheet" href="{{ app_css }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header-copy">
+            <p class="eyebrow">Obsidian Time Dashboard</p>
+            <h1>Task Dashboard</h1>
+            <p class="subtitle">Track time allocation from daily note task blocks and linked-note metadata.</p>
+            {% if refresh_status %}
+                <div class="refresh-status">
+                    <span>Entries {{ refresh_status.entry_count }}</span>
+                    <span>Warnings {{ refresh_status.warning_count }}</span>
+                    {% if refresh_status.last_refreshed_at %}
+                        <span>Refreshed {{ refresh_status.last_refreshed_at|date:'d M Y H:i' }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="site-header-actions">
+            <nav class="site-nav">
+                <a href="/">Dashboard</a>
+                <a href="/summary/">Summary</a>
+                <a href="/entries/">Entries</a>
+                <a href="/warnings/">Warnings</a>
+                <a href="/admin/reporting/tasklayoutconfig/">Settings</a>
+            </nav>
+            <div class="header-tools">
+                <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">Dark Mode</button>
+                <form method="post" action="{% url 'refresh_cache' %}" class="refresh-form" data-refresh-cache-form>
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="refresh-button">Refresh Cache</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        {% if messages %}
+            <section class="message-stack" aria-live="polite">
+                {% for message in messages %}
+                    <div class="flash-message flash-{{ message.tags|default:'info' }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    {% block scripts %}{% endblock %}
+    {% versioned_static 'reporting/app.js' as app_js %}
+    <script src="{{ app_js }}"></script>
+</body>
+</html>

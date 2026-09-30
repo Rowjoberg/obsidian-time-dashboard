@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'reporting/partials/filter_panel.html' %}
+
+<section class="panel panel-tight">
+    <form method="get" class="entry-controls">
+        {% for key, values in request.GET.lists %}
+            {% if key != 'entry_search' and key != 'entry_sort' and key != 'is_resolved' %}
+                {% for value in values %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        <div>
+            <label for="id_entry_search">Search Entries</label>
+            {{ entry_controls_form.entry_search }}
+        </div>
+        <div>
+            <label for="id_entry_sort">Sort</label>
+            {{ entry_controls_form.entry_sort }}
+        </div>
+        <div class="entry-controls-actions">
+            <button type="submit">Update Entries</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Task Entries</h2>
+        <p>{{ entry_count }} matching entries</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Task</th>
+                <th>Time</th>
+                <th>Hours</th>
+                <th>Note Family</th>
+                <th>{{ column_labels.jira_task|default:"Unique Identifier" }}</th>
+                <th>Job Numbers</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entry_rows %}
+                <tr>
+                    <td>{{ entry.task_date }}</td>
+                    <td>
+                        <strong>{{ entry.display_title }}</strong>
+                        <div class="entry-badges">
+                            <span class="badge {% if entry.is_resolved %}badge-success{% else %}badge-warning{% endif %}">{% if entry.is_resolved %}Resolved{% else %}Unlinked{% endif %}</span>
+                            {% if not entry.has_valid_duration %}<span class="badge badge-danger">Invalid duration</span>{% endif %}
+                            {% if entry.note_family %}<span class="badge">{{ entry.note_family }}</span>{% endif %}
+                            {% if entry.jira_task %}<span class="badge">{{ entry.jira_task }}</span>{% endif %}
+                        </div>
+                        {% if entry.linked_note_path %}
+                            <div class="muted">{{ entry.linked_note_path }}</div>
+                        {% endif %}
+                        <details class="entry-details">
+                            <summary>Details</summary>
+                            <div class="details-grid">
+                                <div><strong>Source</strong><div class="muted">{{ entry.source_note_path }}</div></div>
+                                <div><strong>Raw Task</strong><div class="muted warning-raw">{{ entry.raw_line }}</div></div>
+                                {% if entry.facets %}
+                                    <div class="details-wide"><strong>Frontmatter</strong>
+                                        <div class="facet-list">
+                                            {% for field_name, values in entry.facets.items %}
+                                                <span class="badge">{{ field_name }}: {{ values|join:', ' }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </details>
+                    </td>
+                    <td>
+                        {% if entry.start_at %}{{ entry.start_at|date:'H:i' }}{% endif %}
+                        {% if entry.end_at %} - {{ entry.end_at|date:'H:i' }}{% endif %}
+                    </td>
+                    <td>
+                        {% if entry.has_valid_duration %}
+                            {{ entry.duration_hours }}
+                        {% else %}
+                            Invalid
+                        {% endif %}
+                    </td>
+                    <td>{{ entry.note_family|default:'-' }}</td>
+                    <td>{{ entry.jira_task|default:'-' }}</td>
+                    <td>{{ entry.job_numbers|join:', '|default:'-' }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7">No entries found. Try clearing a filter, broadening the period, or refreshing the cache.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

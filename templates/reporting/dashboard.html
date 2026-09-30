@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'reporting/partials/filter_panel.html' %}
+
+<section class="stats-grid">
+    <a class="panel stat-card stat-link" href="{{ entries_url }}">
+        <span>Total Hours</span>
+        <strong>{{ total_hours }}</strong>
+        <p>{{ period.label }}</p>
+    </a>
+    <a class="panel stat-card stat-link" href="{{ entries_url }}">
+        <span>Average Task Hours</span>
+        <strong>{{ average_hours }}</strong>
+        <p>Valid duration entries</p>
+    </a>
+    <a class="panel stat-card stat-link" href="{{ entries_url }}">
+        <span>Imported Entries</span>
+        <strong>{{ entry_count }}</strong>
+        <p>{% if total_entry_count != entry_count %}of {{ total_entry_count }} in current filter set{% else %}Current filter set{% endif %}</p>
+    </a>
+    <a class="panel stat-card stat-link" href="{{ resolved_entries_url }}">
+        <span>Resolved Notes</span>
+        <strong>{{ resolved_count }}</strong>
+        <p>Linked note matches</p>
+    </a>
+    <a class="panel stat-card stat-link" href="{{ warnings_url }}">
+        <span>Warnings</span>
+        <strong>{{ warning_count }}</strong>
+        <p>Across all imports</p>
+    </a>
+</section>
+
+<section class="chart-grid chart-grid-wide">
+    <article class="panel">
+        <div class="panel-heading">
+            <h2>Top Allocation</h2>
+            <p>{{ selected_group_by_label }}</p>
+        </div>
+        <div class="chart-wrap"><canvas id="summary-chart"></canvas></div>
+    </article>
+    <article class="panel">
+        <div class="panel-heading">
+            <h2>Time Trend</h2>
+            <p>{{ period.label }} &middot; by {{ granularity_label }}</p>
+        </div>
+        <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </article>
+    <article class="panel">
+        <div class="panel-heading">
+            <h2>Weekday Pattern</h2>
+            <p>Where time lands in the week</p>
+        </div>
+        <div class="chart-wrap"><canvas id="weekday-chart"></canvas></div>
+    </article>
+    <article class="panel">
+        <div class="panel-heading">
+            <h2>Note Family Mix</h2>
+            <p>Linked note source categories</p>
+        </div>
+        <div class="chart-wrap"><canvas id="note-family-chart"></canvas></div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Activity Heatmap</h2>
+        <p>{{ heatmap.row_label }} vs {{ heatmap.column_label }} &middot; hours</p>
+    </div>
+    <div class="heatmap-wrap">
+        <div id="heatmap-chart" class="heatmap-grid"></div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Top Summary Rows</h2>
+        <p><a href="{{ summary_url }}">Open grouped summary</a></p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Group</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in summary_rows|slice:':15' %}
+                <tr>
+                    <td>{{ row.label }}</td>
+                    <td>{{ row.hours }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="2">No matching entries.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.dashboardCharts = {{ chart_payload|safe }};
+</script>
+{% endblock %}

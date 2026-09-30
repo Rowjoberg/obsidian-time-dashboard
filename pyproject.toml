@@ -1,0 +1,45 @@
+[project]
+name = "task-dashboard"
+version = "0.1.0"
+description = "Local Django dashboard for time-allocation reporting from Obsidian daily notes."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "task-dashboard contributors" }]
+keywords = ["django", "obsidian", "reporting", "time-tracking", "markdown"]
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "Django>=6.0,<7.0",
+    "PyYAML>=6.0",
+    "python-dateutil>=2.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/Rowjoberg/task-dashboard"
+Issues = "https://github.com/Rowjoberg/task-dashboard/issues"
+
+# This is an application, not a library, so there is nothing to build or publish
+# to an index. Dependencies are installed from the table above.
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+# Django generates these; reformatting them only creates noise.
+extend-exclude = ["reporting/migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["reporting", "task_dashboard"]

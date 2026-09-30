@@ -1,0 +1,24 @@
+# Virtual environments and caches
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+
+# Local database - contains the parsed contents of your personal vault
+db.sqlite3
+*.sqlite3
+
+# Local configuration - can contain personal paths and secret keys
+config.yaml
+.env
+.env.*
+
+# Generated artifacts
+dist/
+media/
+*.log
+
+# Local release blocklist (personal tokens used by tools/build_public_release.py)
+tools/.release_blocklist.local
+
+.DS_Store

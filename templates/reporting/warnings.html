@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="stats-grid warning-stats-grid">
+    {% for row in warning_summary_rows %}
+        <article class="panel stat-card">
+            <span>{{ row.code }}</span>
+            <strong>{{ row.count }}</strong>
+            <p>Warnings</p>
+        </article>
+    {% empty %}
+        <article class="panel stat-card">
+            <span>Warnings</span>
+            <strong>0</strong>
+            <p>No import issues recorded</p>
+        </article>
+    {% endfor %}
+</section>
+
+<section class="panel panel-tight">
+    <form method="get" class="warning-controls">
+        <div>
+            <label for="id_code">Warning Code</label>
+            {{ warning_filter_form.code }}
+        </div>
+        <div>
+            <label for="id_source_search">Source Note</label>
+            {{ warning_filter_form.source_search }}
+        </div>
+        <div class="entry-controls-actions">
+            <button type="submit">Filter Warnings</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Import Warnings</h2>
+        <p>Latest 500 warnings</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Source</th>
+                <th>Line</th>
+                <th>Message</th>
+                <th>Raw Line</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for warning in warnings %}
+                <tr>
+                    <td>{{ warning.code }}</td>
+                    <td>{% if warning.source_note %}{{ warning.source_note.relative_path }}{% else %}-{% endif %}</td>
+                    <td>{{ warning.line_number }}</td>
+                    <td>{{ warning.message }}</td>
+                    <td class="warning-raw">{{ warning.raw_line }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">No warnings recorded.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Task Dashboard">
+    <rect width="64" height="64" rx="14" fill="#143642"/>
+    <rect x="14" y="16" width="36" height="7" rx="3.5" fill="#dceff2"/>
+    <rect x="14" y="28" width="28" height="7" rx="3.5" fill="#9db4c0"/>
+    <rect x="14" y="40" width="20" height="7" rx="3.5" fill="#c96d38"/>
+</svg>

@@ -1,0 +1,23 @@
+# Copy this file to config.yaml and edit it for your machine.
+# config.yaml is git-ignored and must never be committed: it can contain
+# personal filesystem paths. Never commit a real secret key here either.
+
+app:
+  debug: true
+  # Replace this before exposing the app to anything other than localhost.
+  secret_key: change-me-for-production
+  allowed_hosts:
+    - 127.0.0.1
+    - localhost
+  time_zone: Australia/Sydney
+
+vault:
+  # Absolute path to your Obsidian vault.
+  path: C:\path\to\Obsidian
+  # Folder inside the vault that holds your daily notes.
+  daily_notes_path: Automated Notes/Daily Notes
+
+reporting:
+  default_period: month
+  default_group_by: display_title
+  invalid_durations_in_totals: false
